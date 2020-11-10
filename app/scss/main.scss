@@ -1,0 +1,121 @@
+@import 'config';
+
+// CUSTOM USER STYLES & IMPORTS
+
+@mixin reset($choise){//сброс нужных элементов
+  @if $choise == last-margin-right{//lastRightMargin
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+
+  @if $choise == last-margin-bottom{//lastBottomMargin
+    &:last-child{
+      margin-bottom: 0;
+    }
+  }
+
+  @if $choise == all { //css reset
+    & * {
+      //transition: 0.1s ease;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-size: inherit;
+    }
+    a, a:hover {
+      //display: inline-block;
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      outline: none;
+      //font-size: inherit;
+    }
+    ul {
+      list-style-type: none;
+    }
+    input:focus {
+      outline: none;
+    }
+
+  }
+}
+
+@function rem($value, $rem-font-size:16px) {
+
+  @if type-of($value) == "number" and (unit($value) == "rem" or unit($value) == "em" or unitless($value)){
+    @return $value;
+  } @else {
+    @return strip-unit($value) / strip-unit($rem-font-size) * 1rem;
+  }
+
+}
+
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+$break-points: (
+        xs: 370px,
+        sm: 480px,
+        md: 768px,
+        lg: 992px,
+        xl: 1180px
+);
+@function getBp($key) {
+  @if map-has-key($break-points, $key) {
+    @return map-get($break-points, $key);
+  }@else{
+  } @return $key;
+}
+
+@mixin mq($breakpointName) {
+  @media screen and (max-width: #{getBp($breakpointName)}) {
+    @content;
+  }
+}
+
+@mixin setFluidFontSize($f-min, $f-max, $w-min, $w-max, $fallback: false) {
+  font-size: $f-min;
+
+  @media (min-width: $w-min) {
+    @if ($fallback) {
+      font-size: $fallback;
+    }
+    font-size: calcFluidFontSize($f-min, $f-max, $w-min, $w-max, px);
+  }
+  @media (min-width: $w-max) {
+    font-size: $f-max;
+  }
+}
+
+@function calcFluidFontSize($f-min, $f-max, $w-min, $w-max, $units: px) {
+  $f-min: strip-unit($f-min);
+  $f-max: strip-unit($f-max);
+  $w-min: strip-unit($w-min);
+  $w-max: strip-unit($w-max);
+
+  $k: ($f-max - $f-min)/($w-max - $w-min);
+  $b: $f-min - $k * $w-min;
+
+  $b: $b + $units;
+
+  @return calc(#{$k} * 100vw + #{$b});
+}
+
+
+
+
+
+html {
+  @include reset(all);
+}
+
+.container {
+  @include paddingContainer(1185px, 32px);
+  position: relative;
+}
