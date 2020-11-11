@@ -107,7 +107,33 @@ $break-points: (
   @return calc(#{$k} * 100vw + #{$b});
 }
 
+@mixin paddingContainer($max-content-width, $paddingLR, $paddingInner:null, $paddingTB:null) { //ширина контента, отступ, отступ внутри блока контента, отступ сверху и снизу
 
+  @if $paddingTB!=null {
+    padding-top: $paddingTB;
+    padding-bottom: $paddingTB;
+  }
+
+  @if $paddingInner!=null {
+    padding-right: calc(50vw - #{$max-content-width } / 2 + #{$paddingInner});
+    padding-left: calc(50vw - #{$max-content-width} / 2 + #{$paddingInner});
+
+    @media (max-width: $max-content-width + $paddingLR * 2) {
+      padding-right: rem($paddingLR + $paddingInner);
+      padding-left: rem($paddingLR + $paddingInner);
+    }
+
+  } @else {
+
+    padding-right: calc(50vw - #{$max-content-width } / 2);
+    padding-left: calc(50vw - #{$max-content-width} / 2);
+
+    @media (max-width: $max-content-width + $paddingLR * 2) {
+      padding-right: rem($paddingLR);
+      padding-left: rem($paddingLR);
+    }
+  }
+}
 
 
 
