@@ -1,22 +1,17 @@
 @import "config";
-@import "font";
 @import "components";
-
-// CUSTOM USER STYLES & IMPORTS
-
 
 
 html {
   @include reset(all);
-  @include setFluidFontSize(16px, 32px, 500px, 1000px);
-
+  @include setFluidFontSize();
 }
 
 .container {
-  @include paddingContainer(1000px, 16px);
+  @include paddingContainer();
   position: relative;
 }
 p{
   //font-size: 3rem;
-
+//@include setFontStyles(h1);
 }
