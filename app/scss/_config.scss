@@ -1,36 +1,132 @@
-// USER VARIABLES SECTION
-
-	//$fontsize: 16px; // Body Font Size
 
 
-// Bootstrap compatible gutter variable => $gutter
-	//$grid-gutter-width: 20px;
-	//$gutter: $grid-gutter-width;
+@import 'node_modules/bootstrap/scss/bootstrap-reboot.scss'; // Bootstrap Reboot collection
+@import 'node_modules/bootstrap/scss/mixins/_breakpoints.scss'; // Bootstrap Breakpoints mixin
+@import 'node_modules/bootstrap/scss/bootstrap-grid.scss'; // Optional Bootstrap Grid
+@import 'node_modules/bootstrap/scss/utilities/_sizing.scss'; // Optional Bootstrap Utilites
 
-// IMPORT SECTION
 
-//@import 'node_modules/bootstrap/scss/bootstrap-reboot.scss'; // Bootstrap Reboot collection
-//@import 'node_modules/bootstrap/scss/mixins/_breakpoints.scss'; // Bootstrap Breakpoints mixin
-// @import 'node_modules/bootstrap/scss/bootstrap-grid.scss'; // Optional Bootstrap Grid
-// @import 'node_modules/bootstrap/scss/utilities/_sizing.scss'; // Optional Bootstrap Utilites
 
-// FONTS LOAD SECTION
+$grid-breakpoints: (
+				xs: 370px,
+				sm: 480px,
+				md: 768px,
+				lg: 992px,
+				xl: 1180px
+);
 
-@mixin font($fname, $fstyle, $fweight, $furl) {
-	@font-face {
-		font-family: $fname;
-		font-style: $fstyle;
-		font-weight: $fweight;
-		// font-display: swap; // Uncomment to initially display system fonts
-		src: local($fname), url($furl) format('woff2');
+@mixin reset($choise){//сброс нужных элементов
+	@if $choise == last-margin-right{//lastRightMargin
+		&:last-child{
+			margin-right: 0;
+		}
+	}
+
+	@if $choise == last-margin-bottom{//lastBottomMargin
+		&:last-child{
+			margin-bottom: 0;
+		}
+	}
+
+	@if $choise == all { //css reset
+		& * {
+			//transition: 0.1s ease;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-size: inherit;
+		}
+		a, a:hover {
+			//display: inline-block;
+			color: inherit;
+			text-decoration: none;
+		}
+		button {
+			outline: none;
+			//font-size: inherit;
+		}
+		ul {
+			list-style-type: none;
+		}
+		input:focus {
+			outline: none;
+		}
+
 	}
 }
 
-//@include font('Roboto', normal, 400, '../fonts/roboto-regular-webfont.woff2');
-//@include font('Roboto', italic, 400, '../fonts/roboto-italic-webfont.woff2');
-//@include font('Roboto', normal, 700, '../fonts/roboto-bold-webfont.woff2');
-//@include font('Roboto', italic, 700, '../fonts/roboto-bolditalic-webfont.woff2');
+@function rem($value, $rem:16px) {
 
-// GENERAL DOCUMENT STYLES
+	@if type-of($value) == "number" and (unit($value) == "rem" or unit($value) == "em" or unitless($value)){
+		@return $value;
+	} @else {
+		@return strip-unit($value) / strip-unit($rem) * 1rem;
+	}
+
+}
+
+@function strip-unit($number) {
+	@if type-of($number) == 'number' and not unitless($number) {
+		@return $number / ($number * 0 + 1);
+	}
+	@return $number;
+}
+
+@function getBp($key,$bp-map: $grid-breakpoints) {
+	@if map-has-key($bp-map, $key) {
+		@return map-get($bp-map, $key);
+	}@else{
+	} @return $key;
+}
+
+@mixin mq($breakpointName) {
+	@media screen and (max-width: #{getBp($breakpointName)}) {
+		@content;
+	}
+}
+
+
+@mixin paddingContainer($max-content-width, $paddingLR, $paddingInner:null, $paddingTB:null) { //ширина контента, отступ, отступ внутри блока контента, отступ сверху и снизу
+
+	@if $paddingTB!=null {
+		padding-top: $paddingTB;
+		padding-bottom: $paddingTB;
+	}
+
+	@if $paddingInner!=null {
+		padding-right: calc(50vw - #{$max-content-width } / 2 + #{$paddingInner});
+		padding-left: calc(50vw - #{$max-content-width} / 2 + #{$paddingInner});
+
+		@media (max-width: $max-content-width + $paddingLR * 2) {
+			padding-right: rem($paddingLR + $paddingInner);
+			padding-left: rem($paddingLR + $paddingInner);
+		}
+
+	} @else {
+
+		padding-right: calc(50vw - #{$max-content-width } / 2);
+		padding-left: calc(50vw - #{$max-content-width} / 2);
+
+		@media (max-width: $max-content-width + $paddingLR * 2) {
+			padding-right: rem($paddingLR);
+			padding-left: rem($paddingLR);
+		}
+	}
+}
+
+@mixin setFluidFontSize($f-min, $f-max, $w-min, $w-max) {
+	font-size: $f-min;
+
+	@media (min-width: $w-min) {
+		$k: ($f-max - $f-min)/($w-max - $w-min);
+		$b: $f-min - $k * $w-min;
+		font-size: calc(#{$k} * 100vw + #{$b});
+	}
+
+	@media (min-width: $w-max) {
+		font-size: $f-max;
+	}
+}
+
 
 
