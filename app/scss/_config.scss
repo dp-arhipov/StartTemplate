@@ -1,5 +1,3 @@
-
-
 //@import 'node_modules/bootstrap/scss/bootstrap-reboot.scss'; // Bootstrap Reboot collection
 //@import 'node_modules/bootstrap/scss/mixins/_breakpoints.scss'; // Bootstrap Breakpoints mixin
 //@import 'node_modules/bootstrap/scss/bootstrap-grid.scss'; // Optional Bootstrap Grid
@@ -9,76 +7,88 @@
 ////site vars section
 
 $grid-breakpoints: (
-				xs: 370px,
-				sm: 480px,
-				md: 768px,
-				lg: 992px,
-				xl: 1180px
+        xs: 370px,
+        sm: 480px,
+        md: 768px,
+        lg: 992px,
+        xl: 1180px
 );
 $font-styles: (
-				html:(
-								line-height: 1.6,
-								font-family: ('Ubuntu', sans-serif)
-				),
-				h1:(
-								font-size: 57px,
-								line-height: 1.2
-				),
-				p3:(
-								font-size: 14px,
-								line-height: 22px
-				),
-	//mods
-				-bold: (
-								font-weight: bold
-				),
-				-normal: (
-								font-weight: normal
-				),
-				-thin: (
-								font-weight: 300
-				),
+        html:(
+                line-height: 1.6,
+                font-family: ('Ubuntu', sans-serif)
+        ),
+        h1:(
+                font-size: 57px,
+                line-height: 1.2
+        ),
+        p3:(
+                font-size: 14px,
+                line-height: 22px
+        ),
+  //mods
+        -bold: (
+                font-weight: bold
+        ),
+        -normal: (
+                font-weight: normal
+        ),
+        -thin: (
+                font-weight: 300
+        ),
 );
 
-$max-content-width:1380px;
-$min-content-width:320px;
+$colors: (
+        black: #000000,
+        blue: #5528FF,
+        grey: #898989
+);
+
+
+$max-content-width: 1380px;
+$min-content-width: 320px;
 $max-font-size: 38px;
 $min-font-size: 16px;
 
 $content-padding: 16px;
-$rem:$max-font-size;
+$rem: $max-font-size;
+
+$c-main:getColor(black);
+$c-accent:getColor(blue);
+$c-second:getColor(grey);
+
 
 
 //отладка
-@mixin showChildBorders{
-	& > * {
-		outline: 1px solid deeppink;
-	}
-	& > * > * {
-		outline: 1px dashed #4aa88b;
-		outline-offset: -1px;
-	}
-	& > * > * > * {
-		outline: 1px dotted dodgerblue;
-		outline-offset: -1px;
-	}
-	& > * > * > * > *  {
-		outline: 1px dotted #961eff;
-		outline-offset: -1px;
-	}
+@mixin showChildBorders {
+  & > * {
+    outline: 1px solid deeppink;
+  }
+  & > * > * {
+    outline: 1px dashed #4aa88b;
+    outline-offset: -1px;
+  }
+  & > * > * > * {
+    outline: 1px dotted dodgerblue;
+    outline-offset: -1px;
+  }
+  & > * > * > * > * {
+    outline: 1px dotted #961eff;
+    outline-offset: -1px;
+  }
 }
 
 
 //сброс
-@mixin reset($choise){//сброс нужных элементов
-	@if $choise == last-margin-right{//lastRightMargin
-		&:last-child{
+@mixin reset($choise) { //сброс нужных элементов
+	@if $choise == last-margin-right { //lastRightMargin
+		&:last-child {
 			margin-right: 0;
 		}
 	}
 
-	@if $choise == last-margin-bottom{//lastBottomMargin
-		&:last-child{
+	@if $choise == last-margin-bottom { //lastBottomMargin
+		&:last-child {
 			margin-bottom: 0;
 		}
 	}
@@ -114,7 +124,7 @@ $rem:$max-font-size;
 //вспомогательные
 @function rem($value, $rem:$rem) {
 
-	@if type-of($value) == "number" and (unit($value) == "rem" or unit($value) == "em" or unitless($value)){
+	@if type-of($value) == "number" and (unit($value) == "rem" or unit($value) == "em" or unitless($value)) {
 		@return $value;
 	} @else {
 		@return strip-unit($value) / strip-unit($rem) * 1rem;
@@ -129,132 +139,151 @@ $rem:$max-font-size;
 	@return $number;
 }
 
+//геттеры из sass-map
+@function getColor($color, $colors-map: $colors) {
+	@return map-get($colors-map, $color);
+}
+
 @function getBp($key,$bp-map: $grid-breakpoints) {
 	@if map-has-key($bp-map, $key) {
 		@return map-get($bp-map, $key);
-	}@else{
-	} @return $key;
+	} @else {
+	}
+	@return $key;
 }
 
 @function getFontStyle($tag, $rule, $fstyle-map: $font-styles) {
 	$tag-styles: map-get($fstyle-map, $tag);
 	@if $tag-styles {
 		@return map-get($tag-styles, $rule);
-	}@else{ @return null }
+	} @else {
+		@return null
+	}
 
 }
 
+
+//работа с цветом
+@function tint($color, $percentage) {
+	@return mix(white, $color, $percentage);
+}
+
+@function shade($color, $percentage) {
+	@return mix(black, $color, $percentage);
+}
+
+
+
 //медиа
 @mixin mq($breakpointName) {
-	@media screen and (max-width: #{getBp($breakpointName)}) {
-		@content;
-	}
+  @media screen and (max-width: #{getBp($breakpointName)}) {
+    @content;
+  }
 }
 
 
 //блоки
 @mixin paddingContainer($max-w: $max-content-width, $paddingLR: $content-padding, $paddingInner:null, $paddingTB:null) { //ширина контента, отступ, отступ внутри блока контента, отступ сверху и снизу
 
-	@if $paddingTB!=null {
+  @if $paddingTB!=null {
 
-		padding-top: $paddingTB;
-		padding-bottom: $paddingTB;
-	}
+    padding-top: $paddingTB;
+    padding-bottom: $paddingTB;
+  }
 
-	@if $paddingInner!=null {
+  @if $paddingInner!=null {
 
-		padding-right: calc(50vw - #{$max-w } / 2 + #{$paddingInner});
-		padding-left: calc(50vw - #{$max-w} / 2 + #{$paddingInner});
+    padding-right: calc(50vw - #{$max-w } / 2 + #{$paddingInner});
+    padding-left: calc(50vw - #{$max-w} / 2 + #{$paddingInner});
 
-		@media (max-width: $max-w + $paddingLR * 2) {
-			padding-right: rem($paddingLR + $paddingInner);
-			padding-left: rem($paddingLR + $paddingInner);
-		}
+    @media (max-width: $max-w + $paddingLR * 2) {
+      padding-right: rem($paddingLR + $paddingInner);
+      padding-left: rem($paddingLR + $paddingInner);
+    }
 
-	} @else {
+  } @else {
 
-		padding-right: calc(50vw - #{$max-w } / 2);
-		padding-left: calc(50vw - #{$max-w} / 2);
+    padding-right: calc(50vw - #{$max-w } / 2);
+    padding-left: calc(50vw - #{$max-w} / 2);
 
-		@media (max-width: $max-w + $paddingLR * 2) {
-			padding-right: rem($paddingLR);
-			padding-left: rem($paddingLR);
-		}
-	}
+    @media (max-width: $max-w + $paddingLR * 2) {
+      padding-right: rem($paddingLR);
+      padding-left: rem($paddingLR);
+    }
+  }
 }
-
 
 
 ////font section
 
 //адаптивный шрифт
 @mixin setFluidFontSize($f-min:$min-font-size, $f-max:$max-font-size, $w-min:$min-content-width, $w-max:$max-content-width) {
-	font-size: $f-min;
+  font-size: $f-min;
 
-	@media (min-width: $w-min) {
-		$k: ($f-max - $f-min)/($w-max - $w-min);
-		$b: $f-min - $k * $w-min;
-		font-size: calc(#{$k} * 100vw + #{$b});
-	}
+  @media (min-width: $w-min) {
+    $k: ($f-max - $f-min)/($w-max - $w-min);
+    $b: $f-min - $k * $w-min;
+    font-size: calc(#{$k} * 100vw + #{$b});
+  }
 
-	@media (min-width: $w-max) {
-		font-size: $f-max;
-	}
+  @media (min-width: $w-max) {
+    font-size: $f-max;
+  }
 }
 
 
 //установка стилей из $font-styles
 @mixin setFontStyles($tag,$mods...) {
 
-	$font-family: getFontStyle($tag, font-family);
-	@if $font-family {
-		font-family: $font-family;
-	}
+  $font-family: getFontStyle($tag, font-family);
+  @if $font-family {
+    font-family: $font-family;
+  }
 
-	$font-size: getFontStyle($tag, font-size);
-	@if $font-size{
-		font-size: rem($font-size);
-	}
+  $font-size: getFontStyle($tag, font-size);
+  @if $font-size {
+    font-size: rem($font-size);
+  }
 
-	$line-height: getFontStyle($tag, line-height);
-	@if $line-height{
-		line-height: rem($line-height);
-	}
+  $line-height: getFontStyle($tag, line-height);
+  @if $line-height {
+    line-height: rem($line-height);
+  }
 
-	$letter-spacing: getFontStyle($tag, letter-spacing);
-	@if $letter-spacing {
-		letter-spacing: rem($letter-spacing);
-	}
+  $letter-spacing: getFontStyle($tag, letter-spacing);
+  @if $letter-spacing {
+    letter-spacing: rem($letter-spacing);
+  }
 
-	$font-weight: getFontStyle($tag, font-weight);
-	@if $font-weight{
-		font-weight: $font-weight;
-	}
+  $font-weight: getFontStyle($tag, font-weight);
+  @if $font-weight {
+    font-weight: $font-weight;
+  }
 
-	$color: getFontStyle($tag, color);
-	@if $color {
-		color: $color;
-	}
+  $color: getFontStyle($tag, color);
+  @if $color {
+    color: $color;
+  }
 
-	$text-transform: getFontStyle($tag, text-transform);
-	@if $text-transform {
-		text-transform: $text-transform;
-	}
+  $text-transform: getFontStyle($tag, text-transform);
+  @if $text-transform {
+    text-transform: $text-transform;
+  }
 
-	@each $mod in $mods {
-		@include setFontStyles("-"+$mod);
-	}
+  @each $mod in $mods {
+    @include setFontStyles("-"+$mod);
+  }
 
 }
 
 @mixin font($fname, $fstyle, $fweight, $furl) {
-	@font-face {
-		font-family: $fname;
-		font-style: $fstyle;
-		font-weight: $fweight;
-		// font-display: swap; // Uncomment to initially display system fonts
-		src: local($fname), url($furl) format('woff2');
-	}
+  @font-face {
+    font-family: $fname;
+    font-style: $fstyle;
+    font-weight: $fweight;
+    // font-display: swap; // Uncomment to initially display system fonts
+    src: local($fname), url($furl) format('woff2');
+  }
 }
 
 //@include font('Roboto', normal, 400, '../fonts/roboto-regular-webfont.woff2');
