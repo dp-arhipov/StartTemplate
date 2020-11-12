@@ -63,7 +63,13 @@ const imagemin     = require('gulp-imagemin');
 const newer        = require('gulp-newer');
 const rsync        = require('gulp-rsync');
 const del          = require('del');
-const pug 		   = require('gulp-pug');
+
+const pug 		   	= require('gulp-pug');
+const plumber 	   	= require('gulp-plumber');
+const htmlValidator = require('gulp-w3c-html-validator');
+const argv 			= require('yargs').argv;
+const gulpif 		= require('gulp-if');
+
 
 function browsersync() {
 	browserSync.init({
@@ -148,9 +154,16 @@ function startwatch() {
 
 function pug2html () {
 	return src(paths.pug.src)
-		.pipe(pug())
+		.pipe(plumber())
+		.pipe(pug({
+				pretty: true
+			}
+		))
+		.pipe(plumber.stop())
+		.pipe(gulpif(argv.prod, htmlValidator()))
 		.pipe(dest(paths.pug.dest))
 }
+
 
 
 function buildcopy() {
@@ -168,6 +181,7 @@ function cleandist() {
 }
 exports.build 		= series(cleandist, styles, scripts, images, buildcopy);
 
+
 exports.browsersync = browsersync;
 exports.scripts     = series(plugins, userscripts, scripts);
 exports.assets      = series(cleanimg, styles, plugins, userscripts, scripts, images);
@@ -176,4 +190,4 @@ exports.images      = images;
 exports.cleanimg    = cleanimg;
 exports.deploy      = deploy;
 exports.pug     	= pug2html;
-exports.default     = series(plugins, userscripts, scripts, images, styles, parallel(browsersync, startwatch));
+exports.default     = series(plugins, userscripts, scripts, images, styles,pug2html, parallel(browsersync, startwatch));
