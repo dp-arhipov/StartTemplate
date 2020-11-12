@@ -9,9 +9,12 @@ html {
 
 .container {
   @include paddingContainer();
+  @include mb(20px);
   position: relative;
+
 }
-p{
+h1{
   //font-size: 3rem;
-@include setFontStyles(u1);
+@include setFontStyles(h1);
+
 }
