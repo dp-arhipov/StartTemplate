@@ -29,6 +29,10 @@ let paths = {
 		src:  baseDir + '/images/src/**/*',
 		dest: baseDir + '/images/dest',
 	},
+	pug:{
+		src:  baseDir + '/pug/src/**/*',
+		dest: baseDir + '/pug/dest',
+	},
 
 	deploy: {
 		hostname:    'username@yousite.com', // Deploy hostname
@@ -59,6 +63,7 @@ const imagemin     = require('gulp-imagemin');
 const newer        = require('gulp-newer');
 const rsync        = require('gulp-rsync');
 const del          = require('del');
+const pug 		   = require('gulp-pug');
 
 function browsersync() {
 	browserSync.init({
@@ -141,6 +146,13 @@ function startwatch() {
 	watch([baseDir + '/js/**/*.js', '!' + baseDir + '/js/**/*.min.js', '!' + baseDir + '/js/**/*.tmp.js'], {usePolling: true}, series(plugins, userscripts, scripts)).on('change', browserSync.reload);
 }
 
+function pug2html () {
+	return src(paths.pug.src)
+		.pipe(pug())
+		.pipe(dest(paths.pug.dest))
+}
+
+
 function buildcopy() {
 	return src([ // Выбираем нужные файлы
 		'app/css/**/*.min.css',
@@ -163,4 +175,5 @@ exports.styles      = styles;
 exports.images      = images;
 exports.cleanimg    = cleanimg;
 exports.deploy      = deploy;
+exports.pug     	= pug2html;
 exports.default     = series(plugins, userscripts, scripts, images, styles, parallel(browsersync, startwatch));
