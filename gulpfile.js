@@ -31,7 +31,7 @@ let paths = {
 	},
 	pug:{
 		src:  baseDir + '/pug/src/**/*',
-		dest: baseDir + '/pug/dest',
+		dest: baseDir + '/',
 	},
 
 	deploy: {
@@ -146,6 +146,7 @@ function deploy() {
 }
 
 function startwatch() {
+	watch(baseDir + '/pug/src/**/*', {usePolling: true}, pug2html).on('change', browserSync.reload);
 	watch(baseDir  + '/' + preprocessor + '/**/*', {usePolling: true}, styles);
 	watch(baseDir  + '/images/src/**/*.{' + imageswatch + '}', {usePolling: true}, images);
 	watch(baseDir  + '/**/*.{' + fileswatch + '}', {usePolling: true}).on('change', browserSync.reload);
@@ -154,13 +155,13 @@ function startwatch() {
 
 function pug2html () {
 	return src(paths.pug.src)
-		.pipe(plumber())
+		//.pipe(plumber())
 		.pipe(pug({
 				pretty: true
 			}
 		))
-		.pipe(plumber.stop())
-		.pipe(gulpif(argv.prod, htmlValidator()))
+		//.pipe(plumber.stop())
+		//.pipe(gulpif(argv.prod, htmlValidator()))
 		.pipe(dest(paths.pug.dest))
 }
 
@@ -190,4 +191,4 @@ exports.images      = images;
 exports.cleanimg    = cleanimg;
 exports.deploy      = deploy;
 exports.pug     	= pug2html;
-exports.default     = series(plugins, userscripts, scripts, images, styles,pug2html, parallel(browsersync, startwatch));
+exports.default     = series( pug2html, plugins, userscripts, scripts, images, styles, parallel(browsersync, startwatch));
