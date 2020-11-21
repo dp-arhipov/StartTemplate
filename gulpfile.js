@@ -4,13 +4,13 @@ let preprocessor = 'scss', // Preprocessor (sass, scss, less, styl)
 	fileswatch   = 'html,htm,txt,json,md,woff2', // List of files extensions for watching & hard reload (comma separated)
 	imageswatch  = 'jpg,jpeg,png,webp,svg', // List of images extensions for watching & compression (comma separated)
 	baseDir      = 'app', // Base directory path without «/» at the end
-	online       = true; // If «false» - Browsersync will work offline without internet connection
+	online       = false; // If «false» - Browsersync will work offline without internet connection
 
 let paths = {
 
 	plugins: {
 		src: [
-			// 'node_modules/jquery/dist/jquery.min.js', // npm vendor example (npm i --save-dev jquery)
+			//'node_modules/jquery/dist/jquery.min.js', // npm vendor example (npm i --save-dev jquery)
 		]
 	},
 
@@ -56,8 +56,13 @@ const styl         = require('gulp-stylus');
 const cleancss     = require('gulp-clean-css');
 const concat       = require('gulp-concat');
 const browserSync  = require('browser-sync').create();
+
 const babel        = require('gulp-babel');
 const uglify       = require('gulp-uglify');
+const terser       = require('gulp-terser');
+//const gccs         = require('google-closure-compiler').gulp();
+//const gccs         = require('gulp-gccs');
+
 const autoprefixer = require('gulp-autoprefixer');
 const imagemin     = require('gulp-imagemin');
 const newer        = require('gulp-newer');
@@ -105,7 +110,26 @@ function scripts() {
 		baseDir + '/js/_tmp/userscripts.tmp.js'
 	])
 		.pipe(concat(paths.jsOutputName))
-		.pipe(uglify())
+		//.pipe(uglify())
+		//.pipe(terser())
+		.pipe(dest(baseDir + '/js'))
+}
+
+function gccsTask() {
+	return src([
+		baseDir + '/js/app.min.js'
+	])
+		.pipe(gccs({
+
+			compilation_level: 'ADVANCED_OPTIMIZATIONS',
+			//formatting: 'pretty_print',
+			// warning_level: 'VERBOSE',
+			// language_in: 'ECMASCRIPT6_STRICT',
+			// language_out: 'ECMASCRIPT5_STRICT',
+			// //output_wrapper: '(function(){\n%output%\n}).call(this)',
+			 //js_output_file: 'app.min.js'
+		}))
+		//.src()
 		.pipe(dest(baseDir + '/js'))
 }
 
@@ -191,4 +215,4 @@ exports.images      = images;
 exports.cleanimg    = cleanimg;
 exports.deploy      = deploy;
 exports.pug     	= pug2html;
-exports.default     = series( pug2html, plugins, userscripts, scripts, images, styles, parallel(browsersync, startwatch));
+exports.default     = series(plugins, userscripts, scripts, images, styles, parallel(browsersync, startwatch));
