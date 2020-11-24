@@ -91,7 +91,9 @@ var SmallQuery = /*#__PURE__*/function () {
 }();
 
 document.addEventListener("DOMContentLoaded", function () {
-  $('.hamburger').onclick(function f() {
-    $(this).toggleClass("is-active");
+  $('.burger').onclick(function f() {
+    $(this).toggleClass("-active");
+    $('.header__slider-menu').toggleClass("-active");
+    $('body').toggleClass("no-scroll");
   });
 });

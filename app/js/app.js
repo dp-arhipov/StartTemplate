@@ -44,7 +44,6 @@ class SmallQuery {
         });
         return this;
     }
-
     toggleClass(cls){
         this.elemArr.forEach((item) => { item.classList.toggle(cls)})
         return this;
@@ -61,8 +60,10 @@ class SmallQuery {
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    $('.hamburger').onclick( function f(){
-        $(this).toggleClass("is-active");
+    $('.burger').onclick( function f(){
+        $(this).toggleClass("-active");
+        $('.header__slider-menu').toggleClass("-active");
+        $('body').toggleClass("no-scroll");
      });
 
 });
